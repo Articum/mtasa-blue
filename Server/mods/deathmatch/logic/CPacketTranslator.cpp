@@ -48,7 +48,6 @@
 #include "packets/CPlayerNoSocketPacket.h"
 #include "packets/CPlayerNetworkStatusPacket.h"
 #include "packets/CPlayerResourceStartPacket.h"
-#include "packets/CPlayerWorldSpecialPropertyPacket.h"
 
 CPacketTranslator::CPacketTranslator(CPlayerManager* pPlayerManager)
 {
@@ -211,10 +210,6 @@ CPacket* CPacketTranslator::Translate(const NetServerPlayerID& Socket, ePacketID
 
         case PACKET_ID_PLAYER_RESOURCE_START:
             pTemp = new CPlayerResourceStartPacket;
-            break;
-
-        case PACKET_ID_PLAYER_WORLD_SPECIAL_PROPERTY:
-            pTemp = new CPlayerWorldSpecialPropertyPacket;
             break;
 
         default:

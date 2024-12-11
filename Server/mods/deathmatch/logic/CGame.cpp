@@ -58,7 +58,6 @@
 #include "packets/CPlayerNetworkStatusPacket.h"
 #include "packets/CPlayerListPacket.h"
 #include "packets/CPlayerClothesPacket.h"
-#include "packets/CPlayerWorldSpecialPropertyPacket.h"
 #include "packets/CServerInfoSyncPacket.h"
 #include "packets/CLuaPacket.h"
 #include "../utils/COpenPortsTester.h"
@@ -1294,12 +1293,6 @@ bool CGame::ProcessPacket(CPacket& Packet)
             return true;
         }
 
-        case PACKET_ID_PLAYER_WORLD_SPECIAL_PROPERTY:
-        {
-            Packet_PlayerWorldSpecialProperty(static_cast<CPlayerWorldSpecialPropertyPacket&>(Packet));
-            return true;
-        }
-
         default:
             break;
     }
@@ -1616,7 +1609,6 @@ void CGame::AddBuiltInEvents()
     m_Events.AddEvent("onPlayerTeamChange", "oldTeam, newTeam", nullptr, false);
     m_Events.AddEvent("onPlayerTriggerInvalidEvent", "eventName, isAdded, isRemote", nullptr, false);
     m_Events.AddEvent("onPlayerChangesProtectedData", "element, key, value", nullptr, false);
-    m_Events.AddEvent("onPlayerChangesWorldSpecialProperty", "property, enabled", nullptr, false);
 
     // Ped events
     m_Events.AddEvent("onPedVehicleEnter", "vehicle, seat, jacked", NULL, false);
@@ -4262,23 +4254,6 @@ void CGame::Packet_PlayerResourceStart(CPlayerResourceStartPacket& Packet)
             pPlayer->CallEvent("onPlayerResourceStart", Arguments, NULL);
         }
     }
-}
-
-void CGame::Packet_PlayerWorldSpecialProperty(CPlayerWorldSpecialPropertyPacket& packet) noexcept
-{
-    CPlayer* player = packet.GetSourcePlayer();
-
-    if (!player)
-        return;
-
-    const std::string& property = packet.GetProperty();
-    const bool         enabled = packet.IsEnabled();
-
-    CLuaArguments arguments;
-    arguments.PushString(property);
-    arguments.PushBoolean(enabled);
-
-    player->CallEvent("onPlayerChangesWorldSpecialProperty", arguments, nullptr);
 }
 
 void CGame::Packet_PlayerModInfo(CPlayerModInfoPacket& Packet)
